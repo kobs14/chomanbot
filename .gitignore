@@ -1,0 +1,9 @@
+.vscode
+.secrets.env
+.idea
+.ruff_cache
+data
+build
+library
+postgresql
+__pycache__
