@@ -16,7 +16,7 @@ docker build -t my-telegram-bot .
 ```
 
 ```
-docker run my-telegram-bot python3 main.py
+docker run -v $(pwd)/data:/data my-telegram-bot python3 main.py
 ```
 
 
