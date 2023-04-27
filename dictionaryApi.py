@@ -1,12 +1,26 @@
+import requests
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from main import get_info
 
+def get_info(word):
+    """Get word info - request from api and returns the response data"""
+    url = 'https://api.dictionaryapi.dev/api/v2/entries/en/{}'.format(word)
+
+    response = requests.get(url)
+
+    # return a custom response if an invalid word is provided
+    if response.status_code == 404:
+        error_response = 'We are not able to provide any information about your word. Please confirm that the word is '\
+                         'spelled correctly or try the search again at a later time.'
+        return error_response
+
+    data = response.json()[0]
+    return data
 
 # set up the introductory statement for the bot when the /start command is invoked
 async def start_dic(update: Update, context: ContextTypes.DEFAULT_TYPE):
-
+    """Starts dictionary"""
     chat_id = update.effective_chat.id
     # await context.bot.send_message(chat_id=chat_id, text="Hello there. Provide any English word and I will give you a bunch "
     #                                                "of information about it.")
@@ -15,6 +29,7 @@ async def start_dic(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # obtain the information of the word provided and format before presenting.
 async def get_word_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Get word info - request from api and returns the response data"""
     # get the word info
     word_info = get_info(context)
 
@@ -40,7 +55,7 @@ async def get_word_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
         meanings += 'Meaning ' + str(meaning_counter) + ':\n'
 
         for word_definition in word_meaning['definitions']:
-            # extract the each of the definitions of the word
+            # extract each of the definitions of the word
             definition = word_definition['definition']
 
             # extract each example for the respective definition
