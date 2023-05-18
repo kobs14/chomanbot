@@ -8,8 +8,8 @@ from pathlib import Path
 file_paths = []
 
 async def zip_files(update, context):
-    """Zip handler for documents received. """
-    logging.info("File handler provoked.")
+    """Zip handler for documents received."""
+    logging.info("zip_files provoked.")
     if not file_paths:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="No files to zip.")
         return
@@ -39,6 +39,6 @@ async def zip_command(update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Send the files you want to include in the zip.")
 
 async def endzip_command(update, context):
-    """End-Zip command zip documents saved by user then sends back the zip file. """
+    """End-Zip command calls zip_files -> zip documents saved by user then sends back the zip file. """
     logging.info("End-Zip provoked.")
     await zip_files(update, context)
