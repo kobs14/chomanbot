@@ -5,6 +5,7 @@ import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
+from zipHandler import file_paths, zip_command, endzip_command
 from voiceChanger import audio_handler
 
 logging.basicConfig(
@@ -40,14 +41,22 @@ async def caps(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await context.bot.send_message(chat_id=update.effective_chat.id, text=text_caps)
 
 async def file_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Audio handler for voice messages received. """
+    """File handler for documents/voice message received. """
     logging.info("File handler provoked.")
     if update.message.voice is not None:
-        logging.info(f"voice message received.")
+        logging.info(f"Voice message received.")
         await audio_handler(update, context)
+    elif update.message.document:
+        logging.info(f"Document received.")
+        document = update.message.document
+        file_path = f"/data/{document.file_name}"
+        file = await context.bot.get_file(document.file_id)
+        await file.download_to_drive(file_path)
+        logging.info(f"Document saved in path {file_path}.")
+        file_paths.append(file_path)
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="File saved successfully.")
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                   text="What a nice sound! I'm not here to listen to some audio, tho. My work is to wish a good night to all members of a group chat")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm not here to handle that kind of file.")
 
 
 if __name__ == "__main__":
@@ -67,6 +76,9 @@ if __name__ == "__main__":
     application.add_handler(caps_handler)
     application.add_handler(start_dictionary)
     application.add_handler(file_handler)
+    application.add_handler(CommandHandler("zip", zip_command))
+    application.add_handler(CommandHandler("endzip", endzip_command))
+    # application.add_handler(MessageHandler(Filters.document, file_handler))
 
 
     application.run_polling()
