@@ -5,9 +5,10 @@ import logging
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, filters
 
-from chatGPTHandler import start_chatgpt, chatgpt_message_handler
-from zipHandler import file_paths, zip_command, endzip_command
-from voiceChanger import audio_handler
+from .chatGPTHandler import start_chatgpt, chatgpt_message_handler
+from .zipHandler import file_paths, zip_command, endzip_command
+from .voiceChanger import audio_handler
+
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
