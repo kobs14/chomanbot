@@ -1,5 +1,8 @@
 FROM python:3.10-alpine
 
+# Install git
+RUN apk update && apk add --no-cache git
+
 WORKDIR /app
 
 COPY requirements.txt requirements.txt
