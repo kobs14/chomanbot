@@ -8,6 +8,7 @@ from telegram.ext import ApplicationBuilder, ContextTypes, CommandHandler, Messa
 from .chatGPTHandler import start_chatgpt, chatgpt_message_handler
 from .zipHandler import file_paths, zip_command, endzip_command
 from .voiceChanger import audio_handler
+from .youtubeAPI import download_youtube_video
 
 
 logging.basicConfig(
@@ -71,6 +72,7 @@ if __name__ == "__main__":
     start_dictionary = CommandHandler('dic', start_dic)
     voice_message_handler = MessageHandler(filters.AUDIO & ~filters.COMMAND, audio_handler)
     file_handler = MessageHandler(filters.ATTACHMENT & ~filters.COMMAND, file_handler)
+    youtube_link_handler = MessageHandler(filters.Regex(r'https?://(www\.)?(youtube\.com|youtu\.be)/.*'), download_youtube_video)
     chatgpt_message_handler = MessageHandler(filters.TEXT & (~filters.COMMAND), chatgpt_message_handler)
 
     application.add_handler(start_handler)
@@ -78,10 +80,12 @@ if __name__ == "__main__":
     application.add_handler(start_dictionary)
     application.add_handler(voice_message_handler)
     application.add_handler(file_handler)
+    application.add_handler(youtube_link_handler)
     application.add_handler(chatgpt_message_handler)
     application.add_handler(CommandHandler("zip", zip_command))
     application.add_handler(CommandHandler("endzip", endzip_command))
     application.add_handler(CommandHandler('chatgpt', start_chatgpt))
+    # application.add_handler(CommandHandler('youtube', download_youtube_video))
     # application.add_handler(echo_handler)
 
     application.run_polling()
